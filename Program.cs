@@ -1,6 +1,7 @@
 ﻿using dotenv.net;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
 
 var env = DotEnv.Read();
 
@@ -9,17 +10,24 @@ MongoClient dbClient = new MongoClient(env["MONGODB"]);
 var database = dbClient.GetDatabase (env["MONGO_DATABASE"]);
 var collection = database.GetCollection<BsonDocument> (env["MONGO_COLLECTION"]);
 
-var dbList = dbClient.ListDatabases().ToList();
+// var document = new BsonDocument { 
+//     { "student_id", 1 }, 
+//     {"scores", new BsonArray {}}, 
+//     { "class_id", 480 }
+// };
 
-var document = new BsonDocument { { "student_id", 10000 }, {
-        "scores",
-        new BsonArray {
-        new BsonDocument { { "type", "exam" }, { "score", 88.12334193287023 } },
-        new BsonDocument { { "type", "quiz" }, { "score", 74.92381029342834 } },
-        new BsonDocument { { "type", "homework" }, { "score", 89.97929384290324 } },
-        new BsonDocument { { "type", "homework" }, { "score", 82.12931030513218 } }
-        }
-        }, { "class_id", 480 }
-};
+// collection.InsertOne(document);
 
-collection.InsertOne(document);
+// Console.Write("Type: ");
+// string type = Console.ReadLine();
+// Console.Write("Score: ");
+// double score = double.Parse(Console.ReadLine());
+// var arrayFilter = Builders<BsonDocument>.Filter.Eq("student_id", 1);
+// var arrayUpdate = Builders<BsonDocument>.Update.Push<BsonDocument>("scores", new BsonDocument { { "type", type }, { "score", score } });
+// collection.UpdateOne(arrayFilter , arrayUpdate);
+// Console.WriteLine("Done!");
+
+var filter = Builders<BsonDocument>.Filter.Eq("student_id", 1);
+var studentDocument = collection.Find(filter).FirstOrDefault();
+
+Console.WriteLine(studentDocument["scores"]);
