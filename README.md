@@ -1,10 +1,14 @@
 # PP-Projekt
 Projekt z Podstaw Programowania UMG
 
+<br>
+
 **Temat projektu:**
 - Wykonanie prototypu wirtualnej uczelni w C# (Aplikacja Konsolowa)
 
-1. Importowanie wymaganych bibliotek (MongoDB do uzywania bazy danych, bson do formatowania plików z bazy danych)
+<br>
+
+**1. Importowanie wymaganych bibliotek (MongoDB do uzywania bazy danych, bson do formatowania plików z bazy danych)**
 ```
 using dotenv.net;
 using MongoDB.Bson;
@@ -12,7 +16,7 @@ using MongoDB.Driver;
 using MongoDB.Bson.Serialization;
 ```
 
-2. Wczytanie zmiennych z .env (Danych do logowania itp.)
+**2. Wczytanie zmiennych z .env (Danych do logowania itp.)**
 ```
 var env = DotEnv.Read();
 
@@ -23,7 +27,7 @@ var database = dbClient.GetDatabase (env["MONGO_DATABASE"]);
 var collection = database.GetCollection<BsonDocument> (env["MONGO_COLLECTION"]);
 ```
 
-3. Tak można tworzyć nowe wpisy w bazie danych
+**3. Tak można tworzyć nowe wpisy w bazie danych**
 ```
 var document = new BsonDocument { 
     { "student_id", 1 }, 
@@ -34,7 +38,7 @@ var document = new BsonDocument {
 collection.InsertOne(document);
 ```
 
-4. Insertowanie danych do istniejącego dokumentu w bazie danych
+**4. Insertowanie danych do istniejącego dokumentu w bazie danych**
 ```
 Console.Write("Type: ");
 string type = Console.ReadLine();
@@ -50,7 +54,7 @@ collection.UpdateOne(arrayFilter , arrayUpdate);
 Console.WriteLine("Done!");
 ```
 
-5. Wyświetlanie tylko jednej zmiennej z całego dokumentu pobranego z bazy
+**5. Wyświetlanie tylko jednej zmiennej z całego dokumentu pobranego z bazy**
 ```
 var filter = Builders<BsonDocument>.Filter.Eq("student_id", 1);
 var studentDocument = collection.Find(filter).FirstOrDefault();
