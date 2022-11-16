@@ -1,4 +1,4 @@
 .env
 bin/*
-obj/Debug/*
+obj/*
 .vscode/*
