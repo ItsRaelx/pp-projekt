@@ -49,9 +49,6 @@ while (isLoged != true)
     // Do a line of space
     Console.WriteLine();
 
-    // Make a hash of the password
-    password = BCrypt.Net.BCrypt.HashPassword(password);
-
     // Search for the user in the database
     var filter = Builders<BsonDocument>.Filter.Eq("login", login);
 
