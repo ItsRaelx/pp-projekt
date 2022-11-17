@@ -14,16 +14,19 @@ var workers = database.GetCollection<BsonDocument> (env["MONGO_WORKERS"]);
 var classes = database.GetCollection<BsonDocument> (env["MONGO_CLASSES"]);
 
 bool isLoged = false;
+bool isStudent = true;
 var password = string.Empty;
+var login = string.Empty;
 
 while (isLoged != true)
 {
+    Console.WriteLine();
     isLoged = false;
     password = string.Empty;
 
     // Login on console
     Console.Write("Login: ");
-    string login = Console.ReadLine();
+    login = Console.ReadLine();
 
     // Password login on console with limit of 25 characters
     Console.Write("Password: ");
@@ -48,6 +51,7 @@ while (isLoged != true)
 
     // Do a line of space
     Console.WriteLine();
+    Console.WriteLine();
 
     // Search for the user in the database
     var filter = Builders<BsonDocument>.Filter.Eq("login", login);
@@ -59,12 +63,12 @@ while (isLoged != true)
         // Check if the password is correct
         if (BCrypt.Net.BCrypt.Verify(password, user["password"].ToString()))
         {
-            Console.WriteLine("Login successful!");
+            Console.WriteLine("Logowanie Udane!");
             isLoged = true;
         }
         else
         {
-            Console.WriteLine("Login failed!");
+            Console.WriteLine("Logowanie Nieudane!");
         }
     }
     else if (workers.Find(filter).FirstOrDefault() != null)
@@ -73,141 +77,151 @@ while (isLoged != true)
         // Check if the password is correct
         if (BCrypt.Net.BCrypt.Verify(password, user["password"].ToString()))
         {
-            Console.WriteLine("Login successful!");
+            Console.WriteLine("Logowanie Udane!");
             isLoged = true;
+            isStudent = false;
         }
         else
         {
-            Console.WriteLine("Login failed!");
+            Console.WriteLine("Logowanie Nieudane!");
         }
     }
     else
     {
-        Console.WriteLine("Login failed!");
+        Console.WriteLine("Logowanie Nieudane!");
     }
 };
 
-/* Create student document with: 
-name, date of birth, class, 
-login, password, email, phone number, 
-address, and list of grades */
+// Do a line of space
+Console.WriteLine();
 
-var student = new BsonDocument
+// Menu for student and diffrent menu for worker
+if (isStudent)
 {
-    { "name", new BsonDocument
-        {
-            { "firstName", "Adam" },
-            { "midName", "Michał" },
-            { "lastName", "Kowalski" }
-        } 
-    },
-    { "dateOfBirth", new DateTime(2000, 1, 1) },
-    { "class", new BsonDocument
-        {
-            { "id", ObjectId.Parse("6374d25b215d99eb272d1f14") },
-            { "specialization", "Def" },
-            { "lab", 0 },
-            { "cwi", 0 },
-            { "ang", 0 }
-        }
-    },
-    { "login", "johndoe" },
-    { "password", password },
-    { "email", "example@example.pl" },
-    { "phoneNumber", 123123123 },
-    { "address", new BsonDocument
-        {
-            { "Country", "Poland" },
-            { "HouseNumber", "1" },
-            { "ApartmentNumber", "1" },
-            { "street", "Example Street" },
-            { "city", "Example City" },
-            { "postalCode", "00-000" }
-        }
-    },
-    { "specialization", "" },
-    { "grades", new BsonDocument{} }
-};
+    Console.WriteLine("Menu Studenta: ");
+    Console.WriteLine("1. Zobacz oceny");
+    Console.WriteLine("2. Zobacz plan lekcji");
+    Console.WriteLine("3. Zobacz twoje dane");
+    Console.WriteLine("6. Zmien haslo");
+    Console.WriteLine("7. Wyloguj");
+    Console.WriteLine();
+    Console.Write("Wybierz opcje: ");
+    string option = Console.ReadLine();
+    Console.WriteLine();
+    
+    //get the student
+    var filter = Builders<BsonDocument>.Filter.Eq("login", login);
+    var user = students.Find(filter).FirstOrDefault();
 
-// Insert student document into collection
-//students.InsertOne(student);
+    switch (option)
+    {
+        case "1":
+            Console.WriteLine("Oceny");
+            break;
+        case "2":
+            Console.WriteLine("Plan lekcji");
+            break;
+        case "3":
+            Console.WriteLine("Twoje dane: ");
+            Console.WriteLine();
+            var studentName = user["name"];
+            var studentFirstName = studentName["firstName"].ToString();
+            var studentLastName = studentName["lastName"].ToString();
+            var studentMiddleName = studentName["midName"].ToString();
+            var studentBirthDate = user["dateOfBirth"].ToString();
+            var studentIndex = user["index"].ToString();
 
-/* Create bson worker document with:
-name, date of birth, login, password, email, phone number,
-address, salary, position, subjects, degree */
+            var studentAddress = user["address"];
+            var studentStreet = studentAddress["street"].ToString();
+            var studentCity = studentAddress["city"].ToString();
+            var studentPostalCode = studentAddress["postalCode"].ToString();
+            var studentCountry = studentAddress["country"].ToString();
+            var studentPhone = user["phoneNumber"].ToString();
+            var studentEmail = user["email"].ToString();
 
-var worker = new BsonDocument
+            var studentClass = user["class"];
+            var studentClassId = studentClass["id"].ToString();
+            var studentClassLab = studentClass["lab"].ToString();
+            var studentClassCwi = studentClass["cwi"].ToString();
+            var studentClassAng = studentClass["ang"].ToString();
+            
+
+            // Print the student data
+            Console.WriteLine("Imie: " + studentFirstName);
+            Console.WriteLine("Nazwisko: " + studentLastName);
+            Console.WriteLine("Drugie imie: " + studentMiddleName);
+            Console.WriteLine("Data urodzenia: " + studentBirthDate);
+            Console.WriteLine("Ulica: " + studentStreet);
+            Console.WriteLine("Miasto: " + studentCity);
+            Console.WriteLine("Kod pocztowy: " + studentPostalCode);
+            Console.WriteLine("Kraj: " + studentCountry);
+            Console.WriteLine("Telefon: " + studentPhone);
+            Console.WriteLine("Email: " + studentEmail);
+            Console.WriteLine("Klasa: " + studentClassId);
+            Console.WriteLine("Lab: " + studentClassLab);
+            Console.WriteLine("Cwi: " + studentClassCwi);
+            Console.WriteLine("Ang: " + studentClassAng);
+
+            break;
+        case "6":
+            Console.WriteLine("Zmien haslo");
+            break;
+        case "7":
+            Console.WriteLine("Wyloguj");
+            break;
+        default:
+            Console.WriteLine("Nie ma takiej opcji");
+            break;
+    }
+
+}
+else
 {
-    { "name", new BsonDocument
-        {
-            { "firstName", "Adam" },
-            { "midName", "Michał" },
-            { "lastName", "Kowalski" }
-        } 
-    },
-    { "dateOfBirth", new DateTime(2000, 1, 1) },
-    { "login", "johndoe" },
-    { "password", password },
-    { "email", "example@example.pl" },
-    { "phoneNumber", 123123123 },
-    { "address", new BsonDocument
-        {
-            { "Country", "Poland" },
-            { "HouseNumber", "1" },
-            { "ApartmentNumber", "1" },
-            { "street", "Example Street" },
-            { "city", "Example City" },
-            { "postalCode", "00-000" }
-        }
-    },
-    { "salary", 1000 },
-    { "position", "nauczyciel" },
-    { "subjects", new BsonArray { "matematyka", "fizyka" } },
-    { "degree", "doktor" }
-};
+    Console.WriteLine("Menu Pracownika: ");
+    Console.WriteLine("1. Dodaj ucznia");
+    Console.WriteLine("2. Dodaj nauczyciela");
+    Console.WriteLine("3. Dodaj klase");
+    Console.WriteLine("4. Dodaj przedmiot");
+    Console.WriteLine("5. Dodaj ocene");
+    Console.WriteLine("6. Dodaj obecnosc");
+    Console.WriteLine("7. Zmien haslo");
+    Console.WriteLine("8. Wyloguj");
+    Console.WriteLine();
+    Console.Write("Wybierz opcje: ");
+    string option = Console.ReadLine();
 
-// Insert worker document into workers collection
-//workers.InsertOne(worker);
+    // Get the worker
+    var filter = Builders<BsonDocument>.Filter.Eq("login", login);
+    var user = workers.Find(filter).FirstOrDefault();
 
-/* Create bson class document with:
-semester, field of study, specializations, faculty */
-
-var classDocument = new BsonDocument
-{
-    { "semester", 1 },
-    { "fieldOfStudy", "informatyka" },
-    { "specializations", new BsonDocument {
-        // Specializations (Def is short for Default)
-        { "Def", new BsonDocument {
-            { "timetable", new BsonDocument {
-                // Days of the week from M to U
-                { "M", new BsonDocument {
-                    // Hours from 7:00 to 20:00
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                }
-            } }
-            }
-        },
-        { "IoT", new BsonDocument {} },
-        { "AiS", new BsonDocument {} }
-    } },
-    { "faculty", "informatyka" }
-};
-
-// Insert class document into classes collection
-//classes.InsertOne(classDocument);
-
+    switch (option)
+    {
+        case "1":
+            Console.WriteLine("Dodaj ucznia");
+            break;
+        case "2":
+            Console.WriteLine("Dodaj nauczyciela");
+            break;
+        case "3":
+            Console.WriteLine("Dodaj klase");
+            break;
+        case "4":
+            Console.WriteLine("Dodaj przedmiot");
+            break;
+        case "5":
+            Console.WriteLine("Dodaj ocene");
+            break;
+        case "6":
+            Console.WriteLine("Dodaj obecnosc");
+            break;
+        case "7":
+            Console.WriteLine("Zmien haslo");
+            break;
+        case "8":
+            Console.WriteLine("Wyloguj");
+            break;
+        default:
+            Console.WriteLine("Nie ma takiej opcji");
+            break;
+    }
+}
