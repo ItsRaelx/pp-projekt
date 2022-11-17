@@ -13,8 +13,82 @@ var students = database.GetCollection<BsonDocument> (env["MONGO_STUDENTS"]);
 var workers = database.GetCollection<BsonDocument> (env["MONGO_WORKERS"]);
 var classes = database.GetCollection<BsonDocument> (env["MONGO_CLASSES"]);
 
-// Make a hash of the password
-var password = BCrypt.Net.BCrypt.HashPassword("password");
+bool isLoged = false;
+var password = string.Empty;
+
+while (isLoged != true)
+{
+    isLoged = false;
+    password = string.Empty;
+
+    // Login on console
+    Console.Write("Login: ");
+    string login = Console.ReadLine();
+
+    // Password login on console with limit of 25 characters
+    Console.Write("Password: ");
+    ConsoleKey key;
+
+    do
+    {
+        var keyInfo = Console.ReadKey(intercept: true);
+        key = keyInfo.Key;
+
+        if (key == ConsoleKey.Backspace && password.Length > 0)
+        {
+            Console.Write("\b \b");
+            password = password[0..^1];
+        }
+        else if (!char.IsControl(keyInfo.KeyChar) && !(password.Length >= 25) )
+        {
+            Console.Write("*");
+            password += keyInfo.KeyChar;
+        }
+    } while (key != ConsoleKey.Enter);
+
+    // Do a line of space
+    Console.WriteLine();
+
+    // Make a hash of the password
+    password = BCrypt.Net.BCrypt.HashPassword(password);
+
+    // Search for the user in the database
+    var filter = Builders<BsonDocument>.Filter.Eq("login", login);
+
+    // Get the user
+    if (students.Find(filter).FirstOrDefault() != null)
+    {
+        var user = students.Find(filter).FirstOrDefault();
+        // Check if the password is correct
+        if (BCrypt.Net.BCrypt.Verify(password, user["password"].ToString()))
+        {
+            Console.WriteLine("Login successful!");
+            isLoged = true;
+        }
+        else
+        {
+            Console.WriteLine("Login failed!");
+        }
+    }
+    else if (workers.Find(filter).FirstOrDefault() != null)
+    {
+        var user = workers.Find(filter).FirstOrDefault();
+        // Check if the password is correct
+        if (BCrypt.Net.BCrypt.Verify(password, user["password"].ToString()))
+        {
+            Console.WriteLine("Login successful!");
+            isLoged = true;
+        }
+        else
+        {
+            Console.WriteLine("Login failed!");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Login failed!");
+    }
+};
 
 /* Create student document with: 
 name, date of birth, class, 
@@ -106,111 +180,12 @@ var classDocument = new BsonDocument
     { "semester", 1 },
     { "fieldOfStudy", "informatyka" },
     { "specializations", new BsonDocument {
+        // Specializations (Def is short for Default)
         { "Def", new BsonDocument {
             { "timetable", new BsonDocument {
+                // Days of the week from M to U
                 { "M", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "T", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "W", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "R", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "F", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "S", new BsonDocument {
-                    { "7", new BsonDocument {} },
-                    { "8", new BsonDocument {} },
-                    { "9", new BsonDocument {} },
-                    { "10", new BsonDocument {} },
-                    { "11", new BsonDocument {} },
-                    { "12", new BsonDocument {} },
-                    { "13", new BsonDocument {} },
-                    { "14", new BsonDocument {} },
-                    { "15", new BsonDocument {} },
-                    { "16", new BsonDocument {} },
-                    { "17", new BsonDocument {} },
-                    { "18", new BsonDocument {} },
-                    { "19", new BsonDocument {} },
-                    { "20", new BsonDocument {} }
-                    } 
-                },
-                { "U", new BsonDocument {
+                    // Hours from 7:00 to 20:00
                     { "7", new BsonDocument {} },
                     { "8", new BsonDocument {} },
                     { "9", new BsonDocument {} },
@@ -238,3 +213,4 @@ var classDocument = new BsonDocument
 
 // Insert class document into classes collection
 //classes.InsertOne(classDocument);
+
