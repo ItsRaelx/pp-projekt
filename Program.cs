@@ -198,6 +198,127 @@ else
     {
         case "1":
             Console.WriteLine("Dodaj ucznia");
+             Console.WriteLine("imię studenta");
+            var firstName = Console.ReadLine();
+            Console.WriteLine("drugie imię studenta");
+            var midName = Console.ReadLine();
+            Console.WriteLine("nazwisko studenta");
+            var lastName = Console.ReadLine();
+            Console.WriteLine("numer indeksu studenta");
+            int index = int.Parse(Console.ReadLine());
+            Console.WriteLine("data urodzenia studenta");
+            string data = Console.ReadLine();
+            //checking date format
+            int d=0,m=0,y=0;
+            if(data.Length==10||data.Length==8){
+                 if(data[2]=='-'){
+                            String[] list = data.Split("-");
+                             int[] da = Array.ConvertAll(data.Split("-"), new Converter<string, int>(int.Parse));
+                             d=da[0];m=da[1];y=da[2];
+
+                            Console.WriteLine(da[0]+" "+da[1]+" "+da[2]);
+
+                }
+                 else{
+                     String[] list = data.Split(".");
+                             int[] da = Array.ConvertAll(data.Split("."), new Converter<string, int>(int.Parse));
+                             d=da[0];m=da[1];y=da[2];
+                            Console.WriteLine(da[0]+" "+da[1]+" "+da[2]);
+                 }
+                    }
+            if(data.Length==9||data.Length==7){
+                 if(data[1]=='-'){
+                            String[] list = data.Split("-");
+                             int[] da = Array.ConvertAll(data.Split("-"), new Converter<string, int>(int.Parse));
+                             d=da[0];m=da[1];y=da[2];
+                            Console.WriteLine(da[0]+" "+da[1]+" "+da[2]);
+
+                }
+                 else{
+                     String[] list = data.Split(".");
+                             int[] da = Array.ConvertAll(data.Split("."), new Converter<string, int>(int.Parse));
+                             d=da[0];m=da[1];y=da[2];
+                            Console.WriteLine(da[0]+" "+da[1]+" "+da[2]);
+                 }
+
+
+            }
+            Random rng = new Random();
+            int haslo = rng.Next() % (10000000);
+            Console.WriteLine("mail studenta");
+            //checking if mail is correct
+            
+            bool pop=false;
+            string mail=string.Empty;
+            while(pop==false){
+            mail = Console.ReadLine();
+             String[] e = mail.Split("@");
+                             
+            if (e.Length==1) {
+                Console.WriteLine("mail jest niepoprawny, podaj poprawny mail");
+            }
+            else{Console.WriteLine("mail jest poprawny");
+            pop=true;}
+            }
+            Console.WriteLine("numer studenta");
+            int phonenumber = int.Parse(Console.ReadLine());
+            Console.WriteLine("podaj adres studenta");
+            Console.WriteLine("kraj:");
+            var country= Console.ReadLine();
+            Console.WriteLine("miasto:");
+            var city= Console.ReadLine();
+             Console.WriteLine("ulica:");
+            var street= Console.ReadLine();
+             Console.WriteLine("nr domu:");
+            var HouseNumber= Console.ReadLine();
+             Console.WriteLine("nr mieszkania:");
+            var ApartmentNumber= Console.ReadLine();
+            Console.WriteLine("kod pocztowy:");
+            var postalCode= Console.ReadLine();
+            
+
+
+
+
+            var student = new BsonDocument
+{
+    { "name", new BsonDocument
+        {
+            { "firstName", firstName },
+            { "midName", midName },
+            { "lastName", lastName }
+        } 
+    },
+    { "index", index },
+    { "dateOfBirth", new DateTime(y, m, d+1) },
+    { "class", new BsonDocument
+        {
+            { "id", ObjectId.Parse("6374d25b215d99eb272d1f14") },
+            { "specialization", "Def" },
+            { "lab", 0 },
+            { "cwi", 0 },
+            { "ang", 0 }
+        }
+    },
+    { "login", index },
+    { "password", haslo },
+    { "email", mail },
+    { "phoneNumber", phonenumber },
+    { "address", new BsonDocument
+        {
+            { "Country", country },
+            { "HouseNumber", HouseNumber },
+            { "ApartmentNumber", ApartmentNumber },
+            { "street", street },
+            { "city", city },
+            { "postalCode", postalCode }
+        }
+    },
+    { "specialization", "" },
+    { "grades", new BsonDocument{} }
+};
+
+            students.InsertOne(student);
             break;
         case "2":
             Console.WriteLine("Dodaj nauczyciela");
