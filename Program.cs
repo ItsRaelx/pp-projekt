@@ -197,8 +197,8 @@ else
     switch (option)
     {
         case "1":
-            Console.WriteLine("Dodaj ucznia");
-             Console.WriteLine("imię studenta");
+             Console.WriteLine("Dodaj studenta");
+            Console.WriteLine("imię studenta");
             var firstName = Console.ReadLine();
             Console.WriteLine("drugie imię studenta");
             var midName = Console.ReadLine();
@@ -247,7 +247,7 @@ else
             int haslo = rng.Next() % (10000000);
             Console.WriteLine("mail studenta");
             //checking if mail is correct
-            
+
             bool pop=false;
             string mail=string.Empty;
             while(pop==false){
@@ -257,10 +257,15 @@ else
             if (e.Length==1) {
                 Console.WriteLine("mail jest niepoprawny, podaj poprawny mail");
             }
-            else{Console.WriteLine("mail jest poprawny");
-            pop=true;}
+            else{
+                String[] em =e[1].Split(".");
+                if (em.Length==1) {
+                Console.WriteLine("mail jest niepoprawny, podaj poprawny mail");}
+                else{
+                Console.WriteLine("mail jest poprawny");
+                pop=true;}}
             }
-            Console.WriteLine("numer studenta");
+            Console.WriteLine("numer kontaktowy studenta");
             int phonenumber = int.Parse(Console.ReadLine());
             Console.WriteLine("podaj adres studenta");
             Console.WriteLine("kraj:");
@@ -319,6 +324,7 @@ else
 };
 
             students.InsertOne(student);
+
             break;
         case "2":
             Console.WriteLine("Dodaj nauczyciela");
